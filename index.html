@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Dropdowns with jQuery and Fetch API</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+</head>
+
+<body>
+
+  <section class="bg-[#B2B2B2] py-[80px] h-screen">
+    <div class="max-w-[450px] mx-auto bg-white shadow-lg rounded-lg px-4 py-8">
+      <div class="text-center text-[14px]">
+        <div class="font-[600] py-6 text-[22px] leading-[26px]">
+          WHAT SHADE HAVE YOU USED BEFORE?
+        </div>
+        <div>
+          Select a foundation shade that worked with your skin to find
+        </div>
+        <div>your best match in Makeup by Mario SurrealSkin™ Foundation:</div>
+        <div class="flex flex-col gap-[20px]">
+          <div>
+            <label class="hidden" for="firstList">Brand</label>
+            <div class="text-start">Brand</div>
+            <select class="border w-full px-2 bg-[#F2F2F2] py-2 text-[#757575]" id="firstList">
+              <option value="" disabled selected>Select Brand</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="hidden" for="secondList hidden">Product</label>
+            <div class="text-start">Product</div>
+            <select class="border w-full px-2 bg-[#F2F2F2] py-2 text-[#757575]" id="secondList" disabled>
+              <option value="" disabled selected>Select Product</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="hidden" for="thirdList hidden">Shade</label>
+            <div class="text-start">Shade</div>
+            <select class="border w-full px-2 bg-[#F2F2F2] py-2 text-[#757575]" id="thirdList" disabled>
+              <option value="" disabled selected>Select Shade</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    $(document).ready(function () {
+      var brandsArray = [{
+        "id": 762,
+        "name": "100% Pure",
+        "search": "100% Pure"
+      }, {
+        "id": 6914,
+        "name": "1028",
+        "search": "1028"
+      }, {
+        "id": 5251,
+        "name": "14e Cosmetics",
+        "search": "14e Cosmetics"
+      }, {
+        "id": 3905,
+        "name": "16 Brand",
+        "search": "16 Brand16Brand"
+      }, {
+        "id": 299,
+        "name": "17 (Seventeen)",
+        "search": "17 (Seventeen)17 Seventeen17 CosmeticsSeventeen CosmeticsBoots No. 17Boots No 17Boots No17Seventeen MakeupBoots 17Boots Seventeen17."
+      }, {
+        "id": 551,
+        "name": "2true",
+        "search": "2true"
+      }];
+      populateDropdown("#firstList", brandsArray);
+      $("#firstList").change(function () {
+        var selectedBrandId = $(this).val();
+        if (selectedBrandId) {
+          fetchProducts(selectedBrandId);
+        }
+      });
+      $("#secondList").change(function () {
+        var selectedProductId = $(this).val();
+        if (selectedProductId) {
+          fetchShades(selectedProductId);
+        }
+      });
+      function fetchProducts(brandId) {
+        var productsApiUrl = "https://findation.com/products.json?api_key=YOUR_API_KEY&brand_id=" + brandId;
+        $.get(productsApiUrl, function (data) {
+          populateDropdown("#secondList", data);
+        });
+      }
+      function fetchShades(productId) {
+        var shadesApiUrl = "https://findation.com/shades.json?api_key=YOUR_API_KEY&product_id=" + productId;
+        $.get(shadesApiUrl, function (data) {
+          populateDropdown("#thirdList", data);
+        });
+      }
+      function populateDropdown(dropdownId, data) {
+        var dropdown = $(dropdownId);
+        dropdown.empty();
+        dropdown.append('<option value="" disabled selected>Select ' + dropdownId.replace('#', '') + '</option>');
+        $.each(data, function (index, item) {
+          dropdown.append('<option value="' + item.id + '">' + item.name + '</option>');
+        });
+        dropdown.prop('disabled', false);
+      }
+    });
+  </script>
+
+</body>
+
+</html>
